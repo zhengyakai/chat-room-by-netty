@@ -136,10 +136,10 @@
             var name = familyName + givenName;
             return name;
         }
-        var name = window.prompt("输入你的昵称or使用随机昵称：");
+        var name = window.prompt("输入你的昵称or点击取消使用随机昵称：");
         if(name == null || name==='null' || name.trim()==='' ){
             name = getName();
-            console.log(name)
+            alert("双击对方有惊喜")
         }
         var host = '58.87.67.162'
         // var host = 'localhost'
