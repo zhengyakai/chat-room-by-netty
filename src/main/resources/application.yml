@@ -1,0 +1,7 @@
+
+netty:
+  port: 7788
+
+websocket:
+  #websocket 路径
+  path: /ws

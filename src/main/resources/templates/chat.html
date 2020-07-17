@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <title>Netty聊天室</title>
+    <style>
+        .talk_con{
+            width:600px;
+            height:500px;
+            border:1px solid #666;
+            margin:50px auto 0;
+            background:#f9f9f9;
+        }
+        .talk_show{
+            width:580px;
+            height:420px;
+            border:1px solid #666;
+            background:#fff;
+            margin:10px auto 0;
+            overflow:auto;
+        }
+        .talk_input{
+            width:580px;
+            margin:10px auto 0;
+        }
+        .whotalk{
+            width:80px;
+            height:30px;
+            float:left;
+            outline:none;
+        }
+        .talk_word{
+            width:420px;
+            height:26px;
+            padding:0px;
+            float:left;
+            margin-left:10px;
+            outline:none;
+            text-indent:10px;
+        }
+        .talk_sub{
+            width:56px;
+            height:30px;
+            float:left;
+            margin-left:10px;
+        }
+        .atalk{
+            margin:10px;
+        }
+        .atalk span{
+            display:inline-block;
+            background:#0181cc;
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+        }
+        .btalk{
+            margin:10px;
+            text-align:right;
+        }
+        .btalk span{
+            display:inline-block;
+            background:#ef8201;
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+        }
+        .reminder-green {
+            margin:10px;
+            display:inline-block;
+            background:green;
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+        }
+
+        .reminder-red {
+            margin:10px;
+            display:inline-block;
+            background:red;
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        function getName(){
+            var familyNames = new Array(
+                "赵",    "钱",    "孙",    "李",    "周",    "吴",    "郑",    "王",    "冯",    "陈",
+                "褚",    "卫",    "蒋",    "沈",    "韩",    "杨",    "朱",    "秦",    "尤",    "许",
+                "何",    "吕",    "施",    "张",    "孔",    "曹",    "严",    "华",    "金",    "魏",
+                "陶",    "姜",    "戚",    "谢",    "邹",    "喻",    "柏",    "水",    "窦",    "章",
+                "云",    "苏",    "潘",    "葛",    "奚",    "范",    "彭",    "郎",    "鲁",    "韦",
+                "昌",    "马",    "苗",    "凤",    "花",    "方",    "俞",    "任",    "袁",    "柳",
+                "酆",    "鲍",    "史",    "唐",    "费",    "廉",    "岑",    "薛",    "雷",    "贺",
+                "倪",    "汤",    "滕",    "殷",    "罗",    "毕",    "郝",    "邬",    "安",    "常",
+                "乐",    "于",    "时",    "傅",    "皮",    "卞",    "齐",    "康",    "伍",    "余",
+                "元",    "卜",    "顾",    "孟",    "平",    "黄",    "和",    "穆",    "萧",    "尹"
+            );
+            var givenNames =  new Array(
+                "子璇", "淼", "国栋", "夫子", "瑞堂", "甜", "敏", "尚", "国贤", "贺祥", "晨涛",
+                "昊轩", "易轩", "益辰", "益帆", "益冉", "瑾春", "瑾昆", "春齐", "杨", "文昊",
+                "东东", "雄霖", "浩晨", "熙涵", "溶溶", "冰枫", "欣欣", "宜豪", "欣慧", "建政",
+                "美欣", "淑慧", "文轩", "文杰", "欣源", "忠林", "榕润", "欣汝", "慧嘉", "新建",
+                "建林", "亦菲", "林", "冰洁", "佳欣", "涵涵", "禹辰", "淳美", "泽惠", "伟洋",
+                "涵越", "润丽", "翔", "淑华", "晶莹", "凌晶", "苒溪", "雨涵", "嘉怡", "佳毅",
+                "子辰", "佳琪", "紫轩", "瑞辰", "昕蕊", "萌", "明远", "欣宜", "泽远", "欣怡",
+                "佳怡", "佳惠", "晨茜", "晨璐", "运昊", "汝鑫", "淑君", "晶滢", "润莎", "榕汕",
+                "佳钰", "佳玉", "晓庆", "一鸣", "语晨", "添池", "添昊", "雨泽", "雅晗", "雅涵",
+                "清妍", "诗悦", "嘉乐", "晨涵", "天赫", "玥傲", "佳昊", "天昊", "萌萌", "若萌"
+            );
+
+            var i = parseInt(10 * Math.random())*10 + parseInt(10 * Math.random());
+            var familyName = familyNames[i];
+
+            var j = parseInt(10 * Math.random())*10 + parseInt(10 * Math.random());
+            var givenName = givenNames[i];
+
+            var name = familyName + givenName;
+            return name;
+        }
+        var name = window.prompt("输入你的昵称or使用随机昵称：");
+        if(name == null || name=='null' || name.trim()=='' ){
+            name = getName();
+            console.log(name)
+        }
+        var host = '58.87.67.162'
+        // var host = 'localhost'
+        var socket;
+        if (!window.WebSocket) {
+            window.WebSocket = window.MozWebSocket;
+        }
+        if (window.WebSocket) {
+            socket = new WebSocket("ws://"+host+":7788/ws");
+
+            socket.onmessage = function(event) {
+                var Words = document.getElementById("words");
+                var TalkWords = document.getElementById("talkwords");
+                var obj = JSON.parse(event.data);
+                var str = '';
+                if(name === obj.name){
+                    str = '<div class="btalk"><span>'+obj.talkWords +'</span></div>';
+                }else{
+                    if(obj.type === 0){
+                        str = '<div class="atalk"><span>'+obj.talkWords +'</span></div>';
+                    }else{
+                        str = '<div class="atalk"><span>'+obj.name+'：'+obj.talkWords +'</span></div>';
+                    }
+                }
+                Words.innerHTML = Words.innerHTML + str;
+                Words.scrollTop = Words.scrollHeight;
+            };
+            socket.onopen = function(event) {
+                $("#name").val(name);
+                var str = '<div class="reminder-green"><span>开启连接</span></div><br/>';
+                var Words = document.getElementById('words');
+                Words.innerHTML = Words.innerHTML + str;
+                var j = {
+                    'type': 0,
+                    'name': name,
+                    'talkWords': "欢迎["+name+"]加入聊天室"
+                }
+                send(JSON.stringify(j));
+            };
+            socket.onclose = function(event) {
+                $("#name").val(name);
+                var str = '<div class="reminder-red"><span>断开连接</span></div><br/>';
+                var Words = document.getElementById('words');
+                Words.innerHTML = Words.innerHTML + str;
+            };
+        } else {
+            alert("你的浏览器不支持 WebSocket！");
+        }
+
+
+        function sendMessage(){
+            var TalkWords = document.getElementById("talkwords");
+            var words = document.getElementById("words");
+            var msg = TalkWords.value;
+            if(msg==''){
+                alert("消息内容不能为空")
+                return;
+            }
+            var j = {
+                'type': 1,
+                'name': name,
+                'talkWords': msg
+            }
+            send(JSON.stringify(j));
+            $("#talkwords").val('');
+            words.scrollTop = words.scrollHeight;
+        }
+
+        $(document).ready(function () {
+            var words = document.getElementById("words");
+            $("#talksub").click(function () {
+                sendMessage();
+            })
+
+            $('#talkwords').bind('keydown',function(event){
+                if(event.keyCode === 13){
+                    sendMessage();
+                }
+            });
+
+            $("#clear").click(function () {
+                $("#words").empty();
+                words.scrollTop = words.scrollHeight;
+            })
+        })
+        function send(message){
+            if (!window.WebSocket) {
+                return;
+            }
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(message);
+            } else {
+                alert("连接没有开启.");
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="talk_con">
+    <div class="talk_show" id="words">
+
+    </div>
+    <div class="talk_input">
+        <input id="name" hidden="hidden">
+        <input type="text" class="talk_word" id="talkwords">
+        <input type="button" value="发送" class="talk_sub" id="talksub">
+        <input type="button" value="清屏" class="talk_sub" id="clear">
+    </div>
+</div>
+</body>
+</html>
