@@ -68,6 +68,20 @@
             color:#fff;
             padding:5px 10px;
         }
+        .ctalk{
+            margin:10px;
+            text-align:center;
+        }
+        .ctalk span{
+            display:inline-block;
+            background:gray;
+            border-radius:10px;
+            color:#fff;
+            padding:5px 10px;
+        }
+
+
+
         .reminder-green {
             margin:10px;
             display:inline-block;
@@ -123,12 +137,12 @@
             return name;
         }
         var name = window.prompt("输入你的昵称or使用随机昵称：");
-        if(name == null || name=='null' || name.trim()=='' ){
+        if(name == null || name==='null' || name.trim()==='' ){
             name = getName();
             console.log(name)
         }
-        var host = '58.87.67.162'
-        // var host = 'localhost'
+        // var host = '58.87.67.162'
+        var host = 'localhost'
         var socket;
         if (!window.WebSocket) {
             window.WebSocket = window.MozWebSocket;
@@ -141,13 +155,24 @@
                 var TalkWords = document.getElementById("talkwords");
                 var obj = JSON.parse(event.data);
                 var str = '';
+                let talkWordsHere = obj.talkWords;
                 if(name === obj.name){
-                    str = '<div class="btalk"><span>'+obj.talkWords +'</span></div>';
+                    if(obj.type === 2){
+                        talkWordsHere = talkWordsHere.replace(name,'你');
+                        str = '<div class="ctalk"><span>'+talkWordsHere +'</span></div>';
+                    }else {
+                        str = '<div class="btalk"><span>'+talkWordsHere +'</span></div>';
+                    }
                 }else{
                     if(obj.type === 0){
-                        str = '<div class="atalk"><span>'+obj.talkWords +'</span></div>';
-                    }else{
-                        str = '<div class="atalk"><span>'+obj.name+'：'+obj.talkWords +'</span></div>';
+                        str = '<div class="atalk"><span>'+talkWordsHere +'</span></div>';
+                    }
+                    if(obj.type === 1){
+                        str = '<div class="atalk" ondblclick="sendPaiYiPai(this)" patName="'+obj.name+'"><span>'+obj.name+'：'+talkWordsHere +'</span></div>';
+                    }
+                    if(obj.type === 2){
+                        talkWordsHere = talkWordsHere.replace(name,'你');
+                        str = '<div class="ctalk"><span>'+talkWordsHere +'</span></div>';
                     }
                 }
                 Words.innerHTML = Words.innerHTML + str;
@@ -175,12 +200,29 @@
             alert("你的浏览器不支持 WebSocket！");
         }
 
+        function sendPaiYiPai(othis){
+            var patName = othis.getAttribute('patName');
+            var words = document.getElementById("words");
+            var msg = '"'+name+'"'+'拍了拍'+'"'+patName+'"';
+            var j = {
+                'type': 2,
+                'name': name,
+                'talkWords': msg
+            }
+            send(JSON.stringify(j));
+            $("#talkwords").val('');
+            words.scrollTop = words.scrollHeight;
+        }
+
+
+
+
 
         function sendMessage(){
             var TalkWords = document.getElementById("talkwords");
             var words = document.getElementById("words");
             var msg = TalkWords.value;
-            if(msg==''){
+            if(msg===''){
                 alert("消息内容不能为空")
                 return;
             }
@@ -197,6 +239,10 @@
         $(document).ready(function () {
             var words = document.getElementById("words");
             $("#talksub").click(function () {
+                sendMessage();
+            })
+
+            $(".atalk").click(function () {
                 sendMessage();
             })
 

@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Setter
 public class MessageVo implements Serializable {
 
-    //0-提示信息 1-在线聊天
+    //0-提示信息 1-在线聊天  2-拍一拍
     private int type;
     //名称
     private String name;
